@@ -16,11 +16,12 @@ namespace EntitiesSamples.HelloTank
         {
             public override void Bake(TankAuthoring authoring)
             {
-                AddComponent(new TankMoveComponent()
+                Entity authorEntity = GetEntity(authoring.gameObject, TransformUsageFlags.Dynamic);
+                AddComponent(authorEntity, new TankMoveComponent()
                 {
                     MoveSpeed = authoring.tankMoveSpeed
                 });
-                AddComponent(new RandomComponent()
+                AddComponent(authorEntity, new RandomComponent()
                 {
                     Value = Unity.Mathematics.Random.CreateFromIndex(authoring.RandomSeed)
                 });

@@ -1,4 +1,3 @@
-
 using Unity.Entities;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace EntitiesSamples.HelloTank
         {
             public override void Bake(TurretAuthoring authoring)
             {
-                AddComponent(new TurretComponent
+                AddComponent(GetEntity(authoring.gameObject, TransformUsageFlags.Dynamic), new TurretComponent
                 {
                     RotationSpeed = authoring.rotationSpeed
                 });

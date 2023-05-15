@@ -28,95 +28,72 @@ namespace EntitiesSamples.HelloTank
         {
             state.Enabled = false;
             var deltaTime = SystemAPI.Time.DeltaTime;
-            var configEntity = SystemAPI.GetSingletonEntity<ConfigComponent>();
-            var spawnAspect = SystemAPI.GetAspectRW<TankSpawnAspect>(configEntity);
-            var ecb = new EntityCommandBuffer(Allocator.Temp);
-            for (int i = 0; i < spawnAspect.TankSpawnNumber; i++)
-            {
-                var newTankEntity = ecb.Instantiate(spawnAspect.TankEntityPrefab);
-                var tankTansform = spawnAspect.GetRandomTankTransform();
-                ecb.SetComponent(newTankEntity, new LocalToWorld {Value = tankTansform.ToMatrix()});
-                ecb.SetComponent(newTankEntity, new TankMoveComponent
-                {
-                    MoveSpeed =  spawnAspect.GetRandomFloat()
-                });
-            }
-            ecb.Playback(state.EntityManager);
 
-            // var ecbSingleto = SystemAPI.GetSingleton<EndSimulationEntityCommandBufferSystem.Singleton>();
-            //
-            // new SpawnTankJob
-            // {
-            //     DateTime = deltaTime,
-            //     ECB = ecbSingleto.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
-            // }.ScheduleParallel();
+            //var config = SystemAPI.GetSingleton<ConfigComponent>();
+
+            //var ecb = new EntityCommandBuffer(Allocator.Temp);
+            //for (int i = 0; i < config.TankCount; i++)
+            //{
+            //    ecb.Instantiate(config.TankEntity);
+            //}
+            //ecb.Playback(state.EntityManager);
+
+            var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
+            var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged);
+            new TankSpawnJob
+            {
+                DeltaTime = deltaTime,
+                ECB = ecb.AsParallelWriter()
+            }.ScheduleParallel();
+            // state.Dependency.Complete();
+            // ecb.Dispose();
         }
 
-        [BurstCompile]
-        partial struct SpawnTankJob : IJobEntity
+        private partial struct TankSpawnJob : IJobEntity
         {
-            public float DateTime;
+            public float DeltaTime;
             public EntityCommandBuffer.ParallelWriter ECB;
-            
-            private void Execute(TankSpawnAspect aspect, [EntityInQueryIndex]int sortKey)
+            private void Execute(ref TankSpawnAspect aspect, in ConfigComponent config, [EntityIndexInQuery] int sortKey)
             {
-               var newTank = ECB.Instantiate(sortKey, aspect.TankEntityPrefab);
-               ECB.SetComponent(sortKey, newTank, new TurretComponent
-               {
-                   RotationSpeed = aspect.GetRandomFloat()
-               });
+                for (int i = 0; i < config.TankCount; i++)
+                {
+                    var newTank = ECB.Instantiate(sortKey, aspect.TankPrefabEntity);
+                    ECB.SetComponent(sortKey, newTank, aspect.GetRandomTransform());
+                }
             }
         }
     }
 
     public readonly partial struct TankSpawnAspect : IAspect
     {
-        // public readonly Entity Entity;
-        // private readonly TransformAspect _transformAspect;
+        public readonly Entity Entity;
 
         private readonly RefRO<ConfigComponent> _configComponent;
+
         private readonly RefRW<RandomComponent> _randomComponent;
 
-        public Entity TankEntityPrefab => _configComponent.ValueRO.TankEntity;
+        public Entity TankPrefabEntity => _configComponent.ValueRO.TankEntity;
 
-        public int TankSpawnNumber => _configComponent.ValueRO.TankCount;
-
-        public UniformScaleTransform GetRandomTankTransform()
+        public LocalTransform GetRandomTransform()
         {
-            return new UniformScaleTransform
+            return new LocalTransform
             {
                 Position = GetRandomPosition(),
                 Rotation = GetRandomRotation(),
-                Scale = GetRandomScale(0.5f)
+                Scale = 1f
             };
         }
 
+        private float3 MaxPosition => new float3(1, 0, 1) * 20;
+
         private float3 GetRandomPosition()
         {
-            float3 randomPosition = float3.zero;
-            float3 max = new float3(10);
-            randomPosition = _randomComponent.ValueRW.Value.NextFloat3(max);
-            
-            return randomPosition;
+            return _randomComponent.ValueRW.Value.NextFloat3(MaxPosition);
         }
 
         private quaternion GetRandomRotation()
         {
-            quaternion randomRotation = quaternion.identity;
-
-            return randomRotation;
-        }
-
-        private float GetRandomScale(float min)
-        {
-            float randomScale = 1.0f;
-            randomScale = _randomComponent.ValueRW.Value.NextFloat(min, 1);
-            return randomScale;
-        }
-
-        public float GetRandomFloat()
-        {
-            return _randomComponent.ValueRW.Value.NextFloat(3f, 10f);
+            return quaternion.identity;
         }
     }
 }

@@ -14,13 +14,14 @@ namespace EntitiesSamples.HelloTank
         {
             public override void Bake(ConfigAuthoring authoring)
             {
-                AddComponent(new ConfigComponent
+                Entity authorEntity = GetEntity(TransformUsageFlags.Dynamic);
+                AddComponent(authorEntity, new ConfigComponent
                 {
                     TankCount = authoring.tankCount,
-                    TankEntity = GetEntity(authoring.tankPrefab)
+                    TankEntity = GetEntity(authoring.tankPrefab, TransformUsageFlags.Dynamic)
                 });
-                AddComponent(new RandomComponent
-                { 
+                AddComponent(authorEntity, new RandomComponent
+                {
                     Value = Unity.Mathematics.Random.CreateFromIndex(51)
                 });
             }

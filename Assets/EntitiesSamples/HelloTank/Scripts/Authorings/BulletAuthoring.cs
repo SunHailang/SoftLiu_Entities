@@ -10,13 +10,13 @@ namespace EntitiesSamples.HelloTank
     public class BulletAuthoring : MonoBehaviour
     {
         public float moveSpeed;
-        
+
 
         class Baker : Baker<BulletAuthoring>
         {
             public override void Bake(BulletAuthoring authoring)
             {
-                AddComponent(new BulletMoveComponent()
+                AddComponent(GetEntity(authoring.gameObject, TransformUsageFlags.Dynamic), new BulletMoveComponent
                 {
                     MoveSpeed = authoring.moveSpeed
                 });

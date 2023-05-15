@@ -8,9 +8,8 @@ namespace EntitiesSamples.HelloCube
     {
         public readonly Entity Entity;
 
-        private readonly TransformAspect _transformAspect;
-
-        private readonly RefRW<RotationComponent> _rotationComponent;
+        private readonly RefRW<CubeRotationComponent> _rotationComponent;
+        private readonly RefRW<LocalTransform> _localTransform;
 
         private float AngleValue
         {
@@ -21,13 +20,12 @@ namespace EntitiesSamples.HelloCube
 
         public void Rotation(float deltaTime)
         {
-            _transformAspect.RotateWorld(quaternion.RotateY(deltaTime * _rotationComponent.ValueRO.RotationSpeed));
-            // AngleValue += deltaTime;
-            // _transformAspect.Rotation = quaternion.AxisAngle(math.up(), AngleValue * _rotationComponent.ValueRO.RotationSpeed);
+            AngleValue += deltaTime;
+            _localTransform.ValueRW.Rotation = quaternion.AxisAngle(math.up(), AngleValue * _rotationComponent.ValueRO.RotationSpeed);
         }
         public void Rise(float deltaTime)
         {
-            _transformAspect.Position += math.up() * _rotationComponent.ValueRO.RotationSpeed / 100 * deltaTime;
+            _localTransform.ValueRW.Position += math.up() * _rotationComponent.ValueRO.RotationSpeed / 100 * deltaTime;
         }
     }
 }

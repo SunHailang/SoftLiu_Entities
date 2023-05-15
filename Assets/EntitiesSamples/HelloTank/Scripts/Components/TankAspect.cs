@@ -13,21 +13,22 @@ namespace EntitiesSamples.HelloTank
     {
         public readonly Entity Entity;
 
-        private readonly TransformAspect _transformAspect;
+        private readonly RefRW<LocalTransform> _localTransform;
 
         private readonly RefRO<TankMoveComponent> _tankMoveComponent;
 
         private readonly RefRW<RandomComponent> _tankRandomComponent;
 
 
-        public void Move(float deltaTime)
+        public void Move(float deltaTime, int sortKey)
         {
-            var pos = _transformAspect.Position;
-            var angle = (0.5f + noise.cnoise(pos / 10f)) * 4.0f * math.PI;
+            var pos = _localTransform.ValueRO.Position;
+            float randomValue = _tankRandomComponent.ValueRW.Value.NextFloat(0.0f, 0.2f);
+            var angle = (0.35f + noise.cnoise(pos / 10f)) * 4.0f * math.PI;
             var dir = float3.zero;
             math.sincos(angle, out dir.x, out dir.z);
-            _transformAspect.Position += dir * deltaTime * _tankMoveComponent.ValueRO.MoveSpeed;
-            _transformAspect.Rotation = quaternion.RotateY(angle);
+            _localTransform.ValueRW.Position += dir * deltaTime * _tankMoveComponent.ValueRO.MoveSpeed;
+            _localTransform.ValueRW.Rotation = quaternion.RotateY(angle);
         }
     }
 }

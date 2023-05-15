@@ -15,6 +15,7 @@ namespace EntitiesSamples.HelloTank
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<TankMoveComponent>();
         }
 
         [BurstCompile]
@@ -26,19 +27,25 @@ namespace EntitiesSamples.HelloTank
         public void OnUpdate(ref SystemState state)
         {
             var deltaTime = SystemAPI.Time.DeltaTime;
-            
-            new TankMoveJob()
+
+            new TankMoveJob
             {
                 DeltaTime = deltaTime
             }.ScheduleParallel();
         }
-        
+
+        [BurstCompile]
         partial struct TankMoveJob : IJobEntity
         {
             public float DeltaTime;
-            private void Execute(TankAspect aspect)
+
+            //private void Execute(ref LocalTransform transform, in TankMoveComponent component)
+            //{
+            //    transform.Position += math.up() * DeltaTime;
+            //}
+            private void Execute(ref TankAspect aspect, [EntityIndexInQuery] int sortKey)
             {
-                aspect.Move(DeltaTime);
+                aspect.Move(DeltaTime, sortKey);
             }
         }
     }

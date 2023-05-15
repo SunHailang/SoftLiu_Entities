@@ -5,5 +5,6 @@ namespace EntitiesSamples.HelloTank
     public partial struct TurretComponent : IComponentData
     {
         public float RotationSpeed;
+        public float RotationTimer;
     }
 }

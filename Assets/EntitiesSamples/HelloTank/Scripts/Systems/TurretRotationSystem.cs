@@ -9,11 +9,10 @@ namespace EntitiesSamples.HelloTank
     [UpdateAfter(typeof(TankSpawnSystem))]
     public partial struct TurretRotationSystem : ISystem
     {
-        private float timer;
-
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
+            state.RequireForUpdate<TurretComponent>();
         }
 
         [BurstCompile]
@@ -25,35 +24,27 @@ namespace EntitiesSamples.HelloTank
         public void OnUpdate(ref SystemState state)
         {
             var deltaTime = SystemAPI.Time.DeltaTime;
+
+            // foreach (var transform in SystemAPI.Query<RefRW<LocalTransform>>().WithAll<TurretComponent>())
+            // {
+            //     transform.ValueRW.Rotation = math.mul(quaternion.RotateY(deltaTime * math.PI), transform.ValueRO.Rotation);
+            // }
+
             new TurretRotationJob
             {
                 DeltaTime = deltaTime
             }.ScheduleParallel();
         }
-        
+
         [BurstCompile]
         partial struct TurretRotationJob : IJobEntity
         {
             public float DeltaTime;
 
-            private void Execute(TurretAsect asect)
+            private void Execute(ref LocalTransform transform, in TurretComponent component)
             {
-                asect.Rotation(DeltaTime);
+                transform.Rotation = math.mul(quaternion.RotateY(DeltaTime * math.PI * component.RotationSpeed), transform.Rotation);
             }
-        }
-    }
-
-    public readonly partial struct TurretAsect : IAspect
-    {
-        public readonly Entity Entity;
-
-        private readonly TransformAspect _transformAspect;
-        private readonly RefRO<TurretComponent> _turretComponent;
-
-        public void Rotation(float deltaTime)
-        {
-            //_transformAspect.Position += math.up() * deltaTime;
-            _transformAspect.RotateWorld(quaternion.RotateY(_turretComponent.ValueRO.RotationSpeed * deltaTime * math.PI));
         }
     }
 }
