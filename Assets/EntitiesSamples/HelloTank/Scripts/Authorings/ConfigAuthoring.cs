@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Entities;
 using UnityEngine;
@@ -8,6 +8,7 @@ namespace EntitiesSamples.HelloTank
     public class ConfigAuthoring : MonoBehaviour
     {
         public int tankCount;
+        public uint tankRandomSeed;
         public GameObject tankPrefab;
 
         class Baker : Baker<ConfigAuthoring>
@@ -22,7 +23,7 @@ namespace EntitiesSamples.HelloTank
                 });
                 AddComponent(authorEntity, new RandomComponent
                 {
-                    Value = Unity.Mathematics.Random.CreateFromIndex(51)
+                    Value = Unity.Mathematics.Random.CreateFromIndex(authoring.tankRandomSeed)
                 });
             }
         }

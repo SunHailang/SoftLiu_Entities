@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tankCount: 10
+  tankRandomSeed: 31
   tankPrefab: {fileID: 6133697010842387927, guid: 425044215448b064f965c1a1eefff094,
     type: 3}
 --- !u!4 &1437632281

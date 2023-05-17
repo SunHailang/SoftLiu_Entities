@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
@@ -45,15 +45,13 @@ namespace EntitiesSamples.HelloTank
                 DeltaTime = deltaTime,
                 ECB = ecb.AsParallelWriter()
             }.ScheduleParallel();
-            // state.Dependency.Complete();
-            // ecb.Dispose();
         }
 
         private partial struct TankSpawnJob : IJobEntity
         {
             public float DeltaTime;
             public EntityCommandBuffer.ParallelWriter ECB;
-            private void Execute(ref TankSpawnAspect aspect, in ConfigComponent config, [EntityIndexInQuery] int sortKey)
+            private void Execute(ref TankSpawnAspect aspect, in ConfigComponent config, [EntityIndexInChunk] int sortKey)
             {
                 for (int i = 0; i < config.TankCount; i++)
                 {

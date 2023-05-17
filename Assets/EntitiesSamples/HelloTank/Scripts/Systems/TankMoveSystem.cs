@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Entities;
@@ -43,7 +43,7 @@ namespace EntitiesSamples.HelloTank
             //{
             //    transform.Position += math.up() * DeltaTime;
             //}
-            private void Execute(ref TankAspect aspect, [EntityIndexInQuery] int sortKey)
+            private void Execute(ref TankAspect aspect, [EntityIndexInChunk] int sortKey)
             {
                 aspect.Move(DeltaTime, sortKey);
             }

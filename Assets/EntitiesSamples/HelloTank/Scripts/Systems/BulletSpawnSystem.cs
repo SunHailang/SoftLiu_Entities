@@ -1,9 +1,14 @@
-using Unity.Burst;
+﻿using Unity.Burst;
+using Unity.Collections;
 using Unity.Entities;
+using Unity.Mathematics;
+using Unity.Rendering;
+using Unity.Transforms;
 
 namespace EntitiesSamples.HelloTank
 {
     [BurstCompile]
+    [UpdateAfter(typeof(TankSpawnSystem))]
     public partial struct BulletSpawnSystem : ISystem
     {
         [BurstCompile]
@@ -21,9 +26,11 @@ namespace EntitiesSamples.HelloTank
             
             new BulletSpawnJob
             {
+                LocalToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true),
+                LocalTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
                 DeltaTime = deltaTime,
                 ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
-            }.Run();
+            }.ScheduleParallel();
 
         }
 
@@ -35,12 +42,33 @@ namespace EntitiesSamples.HelloTank
 
         private partial struct BulletSpawnJob : IJobEntity
         {
+            [ReadOnly] public ComponentLookup<LocalToWorld> LocalToWorldLookup;
+            [ReadOnly] public ComponentLookup<LocalTransform> LocalTransformLookup;
+            
             public float DeltaTime;
             public EntityCommandBuffer.ParallelWriter ECB;
 
-            private void Execute([EntityIndexInQuery]int sortKey)
+            private void Execute([EntityIndexInChunk]int sortKey, ref BulletSpawnAspect aspect)
             {
+                var newBullet = ECB.Instantiate(sortKey, aspect.GetBullSpawnPrefabEntity());
+                var spawnPoint = LocalToWorldLookup[aspect.GetBullSpawnPointEntity()];
+                var spawnScale = LocalTransformLookup[aspect.GetBullSpawnPrefabEntity()].Scale;
                 
+                ECB.SetComponent(sortKey, newBullet, new LocalTransform
+                {
+                    Position = spawnPoint.Position,
+                    Rotation = quaternion.identity,
+                    Scale = spawnScale
+                });
+
+                ECB.SetComponent(sortKey, newBullet, new BulletMoveComponent
+                {
+                    Velocity = spawnPoint.Forward * 90f
+                });
+                ECB.SetComponent(sortKey, newBullet, new URPMaterialPropertyBaseColor
+                {
+                    Value = new float4(1, 0, 0, 1)
+                });
             }
             
         }

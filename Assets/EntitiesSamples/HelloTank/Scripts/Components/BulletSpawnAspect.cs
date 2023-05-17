@@ -1,4 +1,5 @@
-using Unity.Entities;
+﻿using Unity.Entities;
+using Unity.Mathematics;
 
 namespace EntitiesSamples.HelloTank
 {
@@ -11,6 +12,11 @@ namespace EntitiesSamples.HelloTank
         public Entity GetBullSpawnPrefabEntity()
         {
             return _bulletSpawnComponent.ValueRO.BulletPrefab;
+        }
+
+        public Entity GetBullSpawnPointEntity()
+        {
+            return _bulletSpawnComponent.ValueRO.BulletSpawnPoint;
         }
     }
 }

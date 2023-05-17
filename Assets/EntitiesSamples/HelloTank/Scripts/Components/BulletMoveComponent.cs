@@ -1,9 +1,10 @@
-using Unity.Entities;
+﻿using Unity.Entities;
+using Unity.Mathematics;
 
 namespace EntitiesSamples.HelloTank
 {
     public partial struct BulletMoveComponent : IComponentData
     {
-        public float MoveSpeed;
+        public float3 Velocity;
     }
 }
