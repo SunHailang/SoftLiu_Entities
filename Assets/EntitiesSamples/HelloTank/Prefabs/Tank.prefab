@@ -97,8 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80fc1d55cbd41f64bafbaadc9da0f1f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tankMoveSpeed: 10
-  RandomSeed: 31
+  tankMoveSpeed: 1.6
+  randomSeed: 45
 --- !u!1 &6133697010898171373
 GameObject:
   m_ObjectHideFlags: 0
@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a56b8aebf99f423c95ac068f32f435a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 1.5
+  rotationSpeed: 1.2
 --- !u!1 &6133697012117240861
 GameObject:
   m_ObjectHideFlags: 0

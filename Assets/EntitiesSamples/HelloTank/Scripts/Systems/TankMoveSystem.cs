@@ -10,6 +10,7 @@ namespace EntitiesSamples.HelloTank
 {
     [BurstCompile]
     [UpdateAfter(typeof(TankSpawnSystem))]
+    [UpdateAfter(typeof(BulletMoveSystem))]
     public partial struct TankMoveSystem : ISystem
     {
         [BurstCompile]

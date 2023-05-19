@@ -14,13 +14,13 @@ namespace EntitiesSamples.HelloTank
         [BurstCompile]
         public void OnCreate(ref SystemState state)
         {
-            
+            state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
         }
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            var deltaTime = SystemAPI.Time.DeltaTime;
+            // var deltaTime = SystemAPI.Time.DeltaTime;
 
             var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             
@@ -28,8 +28,8 @@ namespace EntitiesSamples.HelloTank
             {
                 LocalToWorldLookup = SystemAPI.GetComponentLookup<LocalToWorld>(true),
                 LocalTransformLookup = SystemAPI.GetComponentLookup<LocalTransform>(true),
-                DeltaTime = deltaTime,
-                ECB = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
+                // DeltaTime = deltaTime,
+                Ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter()
             }.ScheduleParallel();
 
         }
@@ -45,32 +45,33 @@ namespace EntitiesSamples.HelloTank
             [ReadOnly] public ComponentLookup<LocalToWorld> LocalToWorldLookup;
             [ReadOnly] public ComponentLookup<LocalTransform> LocalTransformLookup;
             
-            public float DeltaTime;
-            public EntityCommandBuffer.ParallelWriter ECB;
+            // public float DeltaTime;
+            public EntityCommandBuffer.ParallelWriter Ecb;
 
             private void Execute([EntityIndexInChunk]int sortKey, ref BulletSpawnAspect aspect)
             {
-                var newBullet = ECB.Instantiate(sortKey, aspect.GetBullSpawnPrefabEntity());
+                var newBullet = Ecb.Instantiate(sortKey, aspect.GetBullSpawnPrefabEntity());
                 var spawnPoint = LocalToWorldLookup[aspect.GetBullSpawnPointEntity()];
                 var spawnScale = LocalTransformLookup[aspect.GetBullSpawnPrefabEntity()].Scale;
+
+                var color = aspect.GetBulletColor();
                 
-                ECB.SetComponent(sortKey, newBullet, new LocalTransform
+                Ecb.SetComponent(sortKey, newBullet, new LocalTransform
                 {
                     Position = spawnPoint.Position,
                     Rotation = quaternion.identity,
                     Scale = spawnScale
                 });
 
-                ECB.SetComponent(sortKey, newBullet, new BulletMoveComponent
+                Ecb.SetComponent(sortKey, newBullet, new BulletMoveComponent
                 {
-                    Velocity = spawnPoint.Forward * 90f
+                    Velocity = spawnPoint.Forward * 50f
                 });
-                ECB.SetComponent(sortKey, newBullet, new URPMaterialPropertyBaseColor
+                Ecb.SetComponent(sortKey, newBullet, new URPMaterialPropertyBaseColor
                 {
-                    Value = new float4(1, 0, 0, 1)
+                    Value = color
                 });
             }
-            
         }
     }
 }

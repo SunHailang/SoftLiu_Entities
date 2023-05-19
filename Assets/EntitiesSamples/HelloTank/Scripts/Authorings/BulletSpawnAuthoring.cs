@@ -1,6 +1,7 @@
-﻿
-using Unity.Entities;
+﻿using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 namespace EntitiesSamples.HelloTank
 {
@@ -19,8 +20,16 @@ namespace EntitiesSamples.HelloTank
                     BulletPrefab = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic),
                     BulletSpawnPoint = GetEntity(authoring.bulletSpawnPoint, TransformUsageFlags.Dynamic)
                 });
+                var random = new RandomComponent
+                {
+                    Value = Random.CreateFromIndex(31)
+                };
+                AddComponent(entity, random);
+                AddComponent(entity, new BulletColorComponent
+                {
+                    BulletColor = new float4(1, 0, 0, 1f)
+                });
             }
         }
-        
     }
 }

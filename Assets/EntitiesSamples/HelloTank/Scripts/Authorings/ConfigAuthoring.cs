@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Entities;
+﻿using Unity.Entities;
 using UnityEngine;
 
 namespace EntitiesSamples.HelloTank
@@ -11,11 +9,11 @@ namespace EntitiesSamples.HelloTank
         public uint tankRandomSeed;
         public GameObject tankPrefab;
 
-        class Baker : Baker<ConfigAuthoring>
+        private class Baker : Baker<ConfigAuthoring>
         {
             public override void Bake(ConfigAuthoring authoring)
             {
-                Entity authorEntity = GetEntity(TransformUsageFlags.Dynamic);
+                var authorEntity = GetEntity(TransformUsageFlags.Dynamic);
                 AddComponent(authorEntity, new ConfigComponent
                 {
                     TankCount = authoring.tankCount,

@@ -43,7 +43,7 @@ namespace EntitiesSamples.HelloTank
 
             private void Execute(ref LocalTransform transform, in TurretComponent component)
             {
-                transform.Rotation = math.mul(quaternion.RotateY(DeltaTime * math.PI * component.RotationSpeed), transform.Rotation);
+                transform.Rotation = math.mul(quaternion.RotateY(DeltaTime * component.RotationSpeed), transform.Rotation);
             }
         }
     }
