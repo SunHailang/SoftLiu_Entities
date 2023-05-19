@@ -45,6 +45,7 @@ namespace EntitiesSamples.HelloTank
         private partial struct TankSpawnJob : IJobEntity
         {
             public EntityCommandBuffer.ParallelWriter Ecb;
+
             private void Execute(ref TankSpawnAspect aspect, in ConfigComponent config, [EntityIndexInChunk] int sortKey)
             {
                 for (var i = 0; i < config.TankCount; i++)
@@ -83,9 +84,10 @@ namespace EntitiesSamples.HelloTank
             return _randomComponent.ValueRW.Value.NextFloat3(MaxPosition);
         }
 
-        private quaternion GetRandomRotation()
+        private static quaternion GetRandomRotation()
         {
             return quaternion.identity;
         }
     }
 }
+ 
