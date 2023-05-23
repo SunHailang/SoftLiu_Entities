@@ -95,7 +95,7 @@ namespace PhysicsSamples.HelloWorld
 
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     [UpdateAfter(typeof(PhysicsSystemGroup))]
-    public partial struct RaySystem : ISystem
+    public partial struct RaycastSystem : ISystem
     {
         private ComponentHandles _handle;
 
