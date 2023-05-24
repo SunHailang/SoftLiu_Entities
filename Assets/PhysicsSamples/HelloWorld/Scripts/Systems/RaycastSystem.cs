@@ -123,8 +123,6 @@ namespace PhysicsSamples.HelloWorld
             var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
 
-            
-            
             var job = new RaycastJob
             {
                 PlayerPosition = playerTransform.ValueRO.Position,
@@ -151,16 +149,20 @@ namespace PhysicsSamples.HelloWorld
             {
                 var rayLocalTransform = transform;
 
-                var dir = rayLocalTransform.Position - PlayerPosition;
-                var dis = math.lengthsq(dir);
+                var dirNormalize = math.normalizesafe(rayLocalTransform.Position - PlayerPosition);
 
-                if(dis > (MaxDistance * MaxDistance)) return;
-
+                var filter = new CollisionFilter
+                {
+                    BelongsTo = 0xfffffff7,
+                    CollidesWith = 0xfffffff7,
+                    GroupIndex = 0
+                };
+                
                 var raycastInput = new RaycastInput
                 {
                     Start = PlayerPosition,
-                    End = rayLocalTransform.Position,
-                    Filter = CollisionFilter.Default
+                    End = PlayerPosition + dirNormalize * MaxDistance,
+                    Filter = filter
                 };
                 
                 //var collector = new IgnoreTransparentClosestHitCollector(PhysicsWorldSingleton.CollisionWorld);
