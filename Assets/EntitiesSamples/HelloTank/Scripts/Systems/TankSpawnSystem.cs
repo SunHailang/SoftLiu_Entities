@@ -46,7 +46,7 @@ namespace EntitiesSamples.HelloTank
         {
             public EntityCommandBuffer.ParallelWriter Ecb;
 
-            private void Execute(ref TankSpawnAspect aspect, in ConfigComponent config, [EntityIndexInChunk] int sortKey)
+            private void Execute(TankSpawnAspect aspect, in ConfigComponent config, [EntityIndexInChunk] int sortKey)
             {
                 for (var i = 0; i < config.TankCount; i++)
                 {

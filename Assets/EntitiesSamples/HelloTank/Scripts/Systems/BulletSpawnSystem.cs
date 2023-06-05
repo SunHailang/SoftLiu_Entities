@@ -48,7 +48,7 @@ namespace EntitiesSamples.HelloTank
             // public float DeltaTime;
             public EntityCommandBuffer.ParallelWriter Ecb;
 
-            private void Execute([EntityIndexInChunk]int sortKey, ref BulletSpawnAspect aspect)
+            private void Execute([EntityIndexInChunk]int sortKey, BulletSpawnAspect aspect)
             {
                 var newBullet = Ecb.Instantiate(sortKey, aspect.GetBullSpawnPrefabEntity());
                 var spawnPoint = LocalToWorldLookup[aspect.GetBullSpawnPointEntity()];

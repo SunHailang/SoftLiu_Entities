@@ -23,7 +23,7 @@ namespace PhysicsSamples.ChangeVelocity
 
         private partial struct VelocityJob : IJobEntity
         {
-            [ReadOnly] public float DeltaTime;  
+            [ReadOnly] public float DeltaTime;
             public ComponentLookup<PhysicsVelocity> Velocitys;
 
             private void Execute(Entity entity, LocalTransform transform, in PhysicsCollider collider)
@@ -31,11 +31,11 @@ namespace PhysicsSamples.ChangeVelocity
                 var random = Unity.Mathematics.Random.CreateFromIndex(123);
                 if (Velocitys.HasComponent(entity))
                 {
-                    var angular = math.forward();// / 2f;
+                    var angular = math.forward(); // / 2f;
 
-                    var linear = float3.zero;// math.normalizesafe(angular) * 0.5f * math.length(angular);
-                    
-                    
+                    var linear = float3.zero; // math.normalizesafe(angular) * 0.5f * math.length(angular);
+
+
                     Velocitys[entity] = new PhysicsVelocity
                     {
                         Linear = linear,

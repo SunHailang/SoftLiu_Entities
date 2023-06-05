@@ -71,11 +71,12 @@ namespace EntitiesSamples.HelloCube
             //    //transform.Rotation = math.mul(spin, transform.Rotation);
             //    transform.Position += math.up() * DeltaTime;
             //}
-
-            private void Execute(ref HelloCubeAspect aspect)
-            {
-                aspect.Rotation(DeltaTime);
+            private void Execute(){
             }
+            // private void Execute(ref HelloCubeAspect aspect)
+            // {
+            //     aspect.Rotation(DeltaTime);
+            // }
         }
 
         [BurstCompile]

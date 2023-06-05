@@ -75,7 +75,7 @@ namespace EntitiesSamples.HelloTank
             public EntityCommandBuffer.ParallelWriter ECB;
 
 
-            private void Execute([EntityIndexInChunk] int sortKey, ref BulletAspect aspect)
+            private void Execute([EntityIndexInChunk] int sortKey, BulletAspect aspect)
             {
                 var gravity = new float3(0.0f, -9.82f, 0.0f);
                 var invertY = new float3(1.0f, -1.0f, 1.0f);

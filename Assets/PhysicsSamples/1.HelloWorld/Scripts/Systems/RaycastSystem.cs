@@ -94,7 +94,7 @@ namespace PhysicsSamples.HelloWorld
     }
 
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
-    [UpdateAfter(typeof(PhysicsSystemGroup))]
+    // [UpdateAfter(typeof(PhysicsSystemGroup))]
     public partial struct RaycastSystem : ISystem
     {
         private ComponentHandles _handle;
@@ -103,7 +103,7 @@ namespace PhysicsSamples.HelloWorld
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-            state.RequireForUpdate<PhysicsWorldSingleton>();
+            // state.RequireForUpdate<PhysicsWorldSingleton>();
             state.RequireForUpdate<PlayerTagComponent>();
 
             _handle = new ComponentHandles(ref state);
@@ -118,7 +118,7 @@ namespace PhysicsSamples.HelloWorld
             var world = physicsWorldSingleton.CollisionWorld;
 
             var playerEntity = SystemAPI.GetSingletonEntity<PlayerTagComponent>();
-            var playerTransform = SystemAPI.GetComponentRW<LocalTransform>(playerEntity, true);
+            var playerTransform = SystemAPI.GetComponentRW<LocalTransform>(playerEntity);
 
             var ecbSingleton = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>();
             var ecb = ecbSingleton.CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
@@ -138,8 +138,8 @@ namespace PhysicsSamples.HelloWorld
         [BurstCompile]
         private partial struct RaycastJob : IJobEntity
         {
-            [Unity.Collections.ReadOnly]public float3 PlayerPosition;
-            [Unity.Collections.ReadOnly]public float MaxDistance;
+            [Unity.Collections.ReadOnly] public float3 PlayerPosition;
+            [Unity.Collections.ReadOnly] public float MaxDistance;
 
             public EntityCommandBuffer.ParallelWriter Ecb;
 
@@ -157,14 +157,14 @@ namespace PhysicsSamples.HelloWorld
                     CollidesWith = 0xfffffff7,
                     GroupIndex = 0
                 };
-                
+
                 var raycastInput = new RaycastInput
                 {
                     Start = PlayerPosition,
                     End = PlayerPosition + dirNormalize * MaxDistance,
                     Filter = filter
                 };
-                
+
                 //var collector = new IgnoreTransparentClosestHitCollector(PhysicsWorldSingleton.CollisionWorld);
                 if (sharedComponent.EntityType != 1 && PhysicsWorldSingleton.CastRay(raycastInput, out var hit))
                 {
@@ -172,11 +172,11 @@ namespace PhysicsSamples.HelloWorld
                     var hitDistance = MaxDistance * hit.Fraction;
                     var hitEntity = hit.Entity;
                     var hitPosition = hit.Position;
-                    
-                    
+
+
                     Ecb.AddComponent(sortKey, hit.Entity, new URPMaterialPropertyBaseColor
                     {
-                        Value = new float4(0,  hit.Fraction, 0, 1f)
+                        Value = new float4(0, hit.Fraction, 0, 1f)
                     });
                 }
             }

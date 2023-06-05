@@ -44,7 +44,7 @@ namespace EntitiesSamples.HelloTank
             //{
             //    transform.Position += math.up() * DeltaTime;
             //}
-            private void Execute(ref TankAspect aspect, [EntityIndexInChunk] int sortKey)
+            private void Execute(TankAspect aspect, [EntityIndexInChunk] int sortKey)
             {
                 aspect.Move(DeltaTime, sortKey);
             }
