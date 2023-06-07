@@ -1,3 +1,4 @@
+using PhysicsSamples.HelloWorld;
 using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -9,38 +10,54 @@ namespace PhysicsSamples.ChangeVelocity
     [UpdateInGroup(typeof(FixedStepSimulationSystemGroup))]
     public partial struct VelocitySystem : ISystem
     {
+        private ComponentLookup<PhysicsVelocity> _lookupVelocity;
+        public void OnCreate(ref SystemState state)
+        {
+            state.RequireForUpdate<PhysicsVelocity>();
+
+            _lookupVelocity = state.GetComponentLookup<PhysicsVelocity>();
+
+        }
+
         public void OnUpdate(ref SystemState state)
         {
-            var lookupVelocity = state.GetComponentLookup<PhysicsVelocity>();
+            _lookupVelocity.Update(ref state);
+            //var lookupVelocity = state.GetComponentLookup<PhysicsVelocity>();
 
-            var job = new VelocityJob
+            foreach (var (velocity, transform) in SystemAPI.Query<RefRW<PhysicsVelocity>, RefRW<LocalTransform>>().WithAll<PlayerTagComponent>())
             {
-                DeltaTime = SystemAPI.Time.fixedDeltaTime,
-                Velocitys = lookupVelocity
-            };
-            state.Dependency = job.Schedule(state.Dependency);
+                velocity.ValueRW.Angular = float3.zero;
+                velocity.ValueRW.Linear = math.forward();
+            }
+            
+            // var job = new VelocityJob
+            // {
+            //     DeltaTime = SystemAPI.Time.fixedDeltaTime,
+            //     VelocityLookup = _lookupVelocity
+            // };
+            // state.Dependency = job.Schedule(state.Dependency);
         }
 
         private partial struct VelocityJob : IJobEntity
         {
             [ReadOnly] public float DeltaTime;
-            public ComponentLookup<PhysicsVelocity> Velocitys;
+            public ComponentLookup<PhysicsVelocity> VelocityLookup;
 
-            private void Execute(Entity entity, LocalTransform transform, in PhysicsCollider collider)
+            private void Execute(Entity entity, in PlayerTagComponent playerTag)
             {
                 var random = Unity.Mathematics.Random.CreateFromIndex(123);
-                if (Velocitys.HasComponent(entity))
+                if (VelocityLookup.HasComponent(entity))
                 {
                     var angular = math.forward(); // / 2f;
 
-                    var linear = float3.zero; // math.normalizesafe(angular) * 0.5f * math.length(angular);
+                    var linear = angular * 0.5f;
 
 
-                    Velocitys[entity] = new PhysicsVelocity
-                    {
-                        Linear = linear,
-                        Angular = angular
-                    };
+                    // Velocitys[entity] = new PhysicsVelocity
+                    // {
+                    //     Linear = linear,
+                    //     Angular = angular
+                    // };
                 }
             }
         }
