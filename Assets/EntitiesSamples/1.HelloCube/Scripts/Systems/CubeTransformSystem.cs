@@ -10,41 +10,43 @@ namespace EntitiesSamples.HelloCube
 {
     public partial struct CubeTransformSystem : ISystem
     {
-        private ComponentTypeHandle<LocalTransform> _localTransTypeHandle;
-        private BufferTypeHandle<CubeMoveTrackComponent> _moveBufferTypeHandle;
+        // private ComponentTypeHandle<LocalTransform> _localTransTypeHandle;
+        // private BufferTypeHandle<CubeMoveTrackComponent> _moveBufferTypeHandle;
+        //
+        // private BufferLookup<CubeMoveTrackComponent> _moveBuffLookup;
 
-        private BufferLookup<CubeMoveTrackComponent> _moveBuffLookup;
+        private BeginSimulationEntityCommandBufferSystem.Singleton _ecbSingleton;
 
         public void OnCreate(ref SystemState state)
         {
             state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
-            
-            _localTransTypeHandle = state.GetComponentTypeHandle<LocalTransform>();
-            _moveBufferTypeHandle = state.GetBufferTypeHandle<CubeMoveTrackComponent>();
 
-            _moveBuffLookup = state.GetBufferLookup<CubeMoveTrackComponent>();
+            // _localTransTypeHandle = state.GetComponentTypeHandle<LocalTransform>();
+            // _moveBufferTypeHandle = state.GetBufferTypeHandle<CubeMoveTrackComponent>();
+            //
+            // _moveBuffLookup = state.GetBufferLookup<CubeMoveTrackComponent>();
         }
 
-        [BurstCompile]
+        // [BurstCompile]
         public void OnUpdate(ref SystemState state)
         {
-            _localTransTypeHandle.Update(ref state);
-            _moveBufferTypeHandle.Update(ref state);
-
-            _moveBuffLookup.Update(ref state);
-
-            var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
-
-            var cubeMoveBuffer = SystemAPI.GetSingletonBuffer<CubeMoveTrackComponent>();
+            // _localTransTypeHandle.Update(ref state);
+            // _moveBufferTypeHandle.Update(ref state);
+            //
+            // _moveBuffLookup.Update(ref state);
             
-            var job = new EntityBufferJob
-            {
-                DeltaTime = SystemAPI.Time.DeltaTime,
-                //MoveTrackLookup = _moveBuffLookup,
-                CubeMoveDynamicBuffer = cubeMoveBuffer,
-                ECB = ecb
-            };
-            state.Dependency = job.ScheduleParallel(state.Dependency);
+             var ecb = SystemAPI.GetSingleton<BeginSimulationEntityCommandBufferSystem.Singleton>().CreateCommandBuffer(state.WorldUnmanaged).AsParallelWriter();
+
+            // var cubeMoveBuffer = SystemAPI.GetSingletonBuffer<CubeMoveTrackComponent>();
+
+            // var job = new EntityBufferJob
+            // {
+            //     DeltaTime = SystemAPI.Time.DeltaTime,
+            //     //MoveTrackLookup = _moveBuffLookup,
+            //     CubeMoveDynamicBuffer = cubeMoveBuffer,
+            //     ECB = ecb
+            // };
+            // state.Dependency = job.ScheduleParallel(state.Dependency);
 
             // new EntityJob
             // {
@@ -65,18 +67,17 @@ namespace EntitiesSamples.HelloCube
         {
             [ReadOnly] public float DeltaTime;
             //[ReadOnly] public BufferLookup<CubeMoveTrackComponent> MoveTrackLookup;
-
+        
             [ReadOnly] public DynamicBuffer<CubeMoveTrackComponent> CubeMoveDynamicBuffer;
-
+        
             public EntityCommandBuffer.ParallelWriter ECB;
-
+        
             private void Execute(Entity entity, LocalTransform transform, CubeRotationComponent component)
             {
-                foreach (var trackComponent in CubeMoveDynamicBuffer)
-                {
-                    
-                }
-                
+                // foreach (var trackComponent in CubeMoveDynamicBuffer)
+                // {
+                // }
+        
                 // if (MoveTrackLookup.TryGetBuffer(entity, out var bufferData))
                 // {
                 //     foreach (var moveTrackComponent in bufferData)
