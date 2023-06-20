@@ -12,6 +12,8 @@ public class TestLineRenderer : MonoBehaviour
 
     [Range(0.05f, 1)] public float Width = 0.05f;
     
+    [Range(10, 100)] public int SegmentNum = 10;
+    
     [Range(1, 100)] public float Speed = 10f;
     [Range(0, 90)] public float Angle = 45f;
 
@@ -47,13 +49,23 @@ public class TestLineRenderer : MonoBehaviour
         var sh = vh * tMax - 9.81f * tMax * tMax / 2f;
         
         var p1 = new Vector3(vs * tMax, sh + 1.8f, 0);
-        var p2 = new Vector3(vs * 2 * tMax, 1.8f, 0);
 
-
-        var points = BezierUtils.GetLineBezierList(transform.position, p1, p2, 10);
-        _LineRenderer.positionCount = points.Length;
-        _LineRenderer.SetPositions(points);
+        var t1 = 1.8f / 9.81f;
         
+        var p2 = new Vector3(vs * (2 * tMax + t1), 0, 0);
+
+        if (sh <= 0f)
+        {
+            var points = BezierUtils.GetLineBezierList(transform.position, p2, SegmentNum);
+            _LineRenderer.positionCount = points.Length;
+            _LineRenderer.SetPositions(points);
+        }
+        else
+        {
+            var points = BezierUtils.GetLineBezierList(transform.position, p1, p2, SegmentNum);
+            _LineRenderer.positionCount = points.Length;
+            _LineRenderer.SetPositions(points);
+        }
     }
     
     
